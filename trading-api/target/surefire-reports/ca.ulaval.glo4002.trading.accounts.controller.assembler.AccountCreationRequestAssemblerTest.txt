@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ca.ulaval.glo4002.trading.accounts.controller.assembler.AccountCreationRequestAssemblerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 sec

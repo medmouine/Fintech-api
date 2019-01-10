@@ -1,0 +1,13 @@
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/StocksServer.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/ExposeEntityIdRestMvcConfiguration.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/repositories/StockRepository.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/StocksSpringApplication.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/domain/stocks/Price.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/controllers/MarketController.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/domain/stocks/Stock.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/controllers/CompanyController.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/repositories/MarketRepository.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/repositories/CompanyRepository.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/domain/markets/Market.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/controllers/StockController.java
+/home/med/Documents/QA/projet2018-eq3-medmouine/stocks-api/src/main/java/ca/ulaval/glo4002/stocks/domain/companies/Company.java

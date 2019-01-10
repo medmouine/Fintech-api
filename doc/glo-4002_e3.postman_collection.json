@@ -1,0 +1,2747 @@
+{
+	"info": {
+		"_postman_id": "5c970025-c640-4684-ae7a-77f0baf67740",
+		"name": "glo-4002_e3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "COOU - Ouvrir un compte avec des crédits",
+			"item": [
+				{
+					"name": "ouvrir un compte, succès",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "903bb531-551f-4be2-a50e-c45501e643dd",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var accountNumberLocation = postman.getResponseHeader(\"Location\");",
+									"var accountNumber = accountNumberLocation.split(\"/\", 3)[2];",
+									"console.log(accountNumber);",
+									"pm.environment.set(\"created_account_number\", accountNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"investorId\": 42,\n    \"investorName\": \"John Doe\",\n    \"email\": \"jDoe@mail.com\",\n    \"credits\": 1000\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account already opened",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "903bb531-551f-4be2-a50e-c45501e643dd",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"ACCOUNT_ALREADY_OPEN\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"investorId\": 42,\n    \"investorName\": \"John Doe\",\n    \"email\": \"jDoe@mail.com\",\n    \"credits\": 100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid amount - zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "903bb531-551f-4be2-a50e-c45501e643dd",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_AMOUNT\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"investorId\": 43,\n    \"investorName\": \"John Doe\",\n    \"email\": \"jDoe@mail.com\",\n    \"credits\": 0\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid amount - less than zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "903bb531-551f-4be2-a50e-c45501e643dd",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_AMOUNT\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"investorId\": 43,\n    \"investorName\": \"John Doe\",\n    \"email\": \"jDoe@mail.com\",\n    \"credits\": -100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "consulter les details d'un compte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a4388d5a-01e1-47d6-954b-b20d45336908",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"accountNumber\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"investorId\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"investorProfile\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"type\": {",
+									"                    \"type\": \"string\"",
+									"                },",
+									"                \"focusAreas\": {",
+									"                    \"type\": \"array\",",
+									"                    \"items\": {\"type\": \"string\"}",
+									"                }",
+									"            },",
+									"            \"required\": [ \"type\", \"focusAreas\" ]",
+									"        },",
+									"        \"credits\": {",
+									"            \"type\": \"number\"",
+									"        }",
+									"    },",
+									"    \"required\": [ \"accountNumber\", \"investorId\", \"investorProfile\", \"credits\" ]",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Account number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedAccountNumber = pm.variables.get(\"created_account_number\");",
+									"    pm.expect(jsonData.accountNumber).to.eql(expectedAccountNumber);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a4388d5a-01e1-47d6-954b-b20d45336908",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"ACCOUNT_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{invalid_account_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{invalid_account_number}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TXAC - Effectuer un achat",
+			"item": [
+				{
+					"name": "Effectuer une transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var transactionNumberLocation = postman.getResponseHeader(\"Location\");",
+									"var transactionNumber = transactionNumberLocation.split(\"/\", 5)[4];",
+									"console.log(transactionNumber);",
+									"pm.environment.set(\"created_buy_transaction_number\", transactionNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"ACCOUNT_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{invalid_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{invalid_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unsupported transaction type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"UNSUPPORTED_TRANSACTION_TYPE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUYED\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "not enough credits",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"NOT_ENOUGH_CREDITS\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 10000\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid quantity - zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_QUANTITY\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 0\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid quantity - less than zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_QUANTITY\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": -100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "stock not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"STOCK_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"BOOPDEDOOP\"\n\t},\n\t\"quantity\": 100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "39f02fa9-7913-49b3-9342-9e3ead82eceb",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_DATE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2222-08-21T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consulter les details d'une transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b5623aa5-2905-4820-aa36-5a6f19885603",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"transactionNumber\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"type\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"date\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"stock\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"market\": {",
+									"                    \"type\": \"string\"",
+									"                },",
+									"                \"symbol\": {",
+									"                    \"type\": \"string\"",
+									"                }",
+									"            },",
+									"            \"required\": [ \"market\", \"symbol\" ]",
+									"        },",
+									"        \"purchasedPrice\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"quantity\":{",
+									"            \"type\": \"number\"",
+									"        }",
+									"    },",
+									"    \"required\": [ \"transactionNumber\", \"type\", \"date\", \"stock\", \"purchasedPrice\", \"quantity\" ]",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"created_buy_transaction_number\");",
+									"    pm.expect(jsonData.transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions/{{created_buy_transaction_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions",
+								"{{created_buy_transaction_number}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transaction not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b5623aa5-2905-4820-aa36-5a6f19885603",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"TRANSACTION_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions/{{invalid_transaction_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions",
+								"{{invalid_transaction_number}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TXVE - Effectuer une vente",
+			"item": [
+				{
+					"name": "Effectuer une vente",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var transactionNumberLocation = postman.getResponseHeader(\"Location\");",
+									"var transactionNumber = transactionNumberLocation.split(\"/\", 5)[4];",
+									"console.log(transactionNumber);",
+									"pm.environment.set(\"created_sell_transaction_number\", transactionNumber);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-22T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"ACCOUNT_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{invalid_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{invalid_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unsupported transaction type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"UNSUPPORTED_TRANSACTION_TYPE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELLED\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid quantity - zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_QUANTITY\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 0\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid quantity - less than zero",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_QUANTITY\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": -100\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "stock not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"STOCK_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"BOOPDEDOOP\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid transaction number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"invalid_transaction_number\");",
+									"    pm.expect(jsonData[0].transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_TRANSACTION_NUMBER\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{invalid_transaction_number}}\",\n    \"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "not enough stock",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"created_buy_transaction_number\");",
+									"    pm.expect(jsonData[0].transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"NOT_ENOUGH_STOCK\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 20\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_DATE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2222-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "not enough credits",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"NOT_ENOUGH_CREDITS\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "33fa84c6-7437-4349-a0ed-90cee1815fce",
+								"exec": [
+									"pm.sendRequest({",
+									"    url: 'localhost:8181/accounts',",
+									"    method: 'POST',",
+									"    header: 'Content-Type:application/json',",
+									"    body: {",
+									"        mode: 'raw',",
+									"        raw: JSON.stringify(",
+									"            {",
+									"                \"investorId\": 29,",
+									"                \"investorName\": \"John John\",",
+									"                \"email\": \"jDoe@mail.com\",",
+									"                \"credits\": 212.50",
+									"            })",
+									"    }",
+									"}, function(err, res) {",
+									"    //console.log(res.headers.get(\"Location\").split(\"/\", 3)[2]);",
+									"    console.log(res);",
+									"    var accountLocation = res.headers.get(\"Location\");",
+									"    console.log(accountLocation)",
+									"    var accountNumber = accountLocation.split(\"/\", 3)[2];",
+									"    console.log(accountNumber);",
+									"    pm.environment.set(\"notEnoughCreditsAccount\", accountNumber);",
+									"    ",
+									"pm.sendRequest({",
+									"    url: 'localhost:8181/accounts/' + accountNumber + '/transactions',",
+									"    method: 'POST',",
+									"    header: 'Content-Type:application/json',",
+									"    body: {",
+									"        mode: 'raw',",
+									"        raw: JSON.stringify(",
+									"            {",
+									"                \"type\": \"BUY\",",
+									"                \"date\": \"2018-11-15T10:23:20.142Z\",",
+									"                \"stock\": {",
+									"                    \"market\": \"NASDAQ\",",
+									"                    \"symbol\": \"GOOG\"",
+									"                },",
+									"                \"quantity\": 1",
+									"            })",
+									"    }",
+									"}, function(err, res) {",
+									"    //console.log(res.headers.get(\"Location\").split(\"/\", 3)[2]);",
+									"    console.log(res);",
+									"    transactionLocation = res.headers.get(\"Location\");",
+									"    console.log(transactionLocation);",
+									"    transactionNumber = transactionLocation.split(\"/\", 5)[4];",
+									"    console.log(transactionNumber);",
+									"    pm.environment.set(\"notEnoughCreditsTransaction\", transactionNumber);",
+									"});",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"GOOG\"\n    },\n    \"transactionNumber\": \"{{notEnoughCreditsTransaction}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{notEnoughCreditsAccount}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{notEnoughCreditsAccount}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "stock parameters dont match",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0c209c29-b0fe-4130-bcb3-571c004ca923",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"STOCK_PARAMETERS_DONT_MATCH\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"SELL\",\n    \"date\": \"2018-08-21T15:23:20.142Z\",\n    \"stock\": {\n        \"market\": \"NASDAQ\",\n        \"symbol\": \"MSFT\"\n    },\n    \"transactionNumber\": \"{{created_buy_transaction_number}}\",\n    \"quantity\": 5\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "consulter les details d'une transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8d54938-4f42-4681-b7fc-30e07d96c071",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"transactionNumber\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"type\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"date\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"fees\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"stock\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"market\": {",
+									"                    \"type\": \"string\"",
+									"                },",
+									"                \"symbol\": {",
+									"                    \"type\": \"string\"",
+									"                }",
+									"            },",
+									"            \"required\": [ \"market\", \"symbol\" ]",
+									"        },",
+									"        \"priceSold\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"quantity\":{",
+									"            \"type\": \"number\"",
+									"        }",
+									"    },",
+									"    \"required\": [ \"transactionNumber\", \"type\", \"date\", \"fees\", \"stock\", \"priceSold\", \"quantity\" ]",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"created_sell_transaction_number\");",
+									"    pm.expect(jsonData.transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions/{{created_sell_transaction_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions",
+								"{{created_sell_transaction_number}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "transaction not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e8d54938-4f42-4681-b7fc-30e07d96c071",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"TRANSACTION_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions/{{invalid_transaction_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions",
+								"{{invalid_transaction_number}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TXFR - Appliquer des frais de transaction",
+			"item": [
+				{
+					"name": "consulter les details d'une transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b9a7eb6d-fd5b-41e6-82d8-2abbed003168",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"transactionNumber\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"type\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"date\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"fees\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"stock\": {",
+									"            \"type\": \"object\",",
+									"            \"properties\": {",
+									"                \"market\": {",
+									"                    \"type\": \"string\"",
+									"                },",
+									"                \"symbol\": {",
+									"                    \"type\": \"string\"",
+									"                }",
+									"            },",
+									"            \"required\": [ \"market\", \"symbol\" ]",
+									"        },",
+									"        \"purchasedPrice\": {",
+									"            \"type\": \"number\"",
+									"        },",
+									"        \"quantity\":{",
+									"            \"type\": \"number\"",
+									"        }",
+									"    },",
+									"    \"required\": [ \"transactionNumber\", \"type\", \"date\", \"fees\", \"stock\", \"purchasedPrice\", \"quantity\" ]",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"created_buy_transaction_number\");",
+									"    pm.expect(jsonData.transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions/{{created_buy_transaction_number}}",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions",
+								"{{created_buy_transaction_number}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TXHO - Refuser les transactions en dehors des heures d’ouverture",
+			"item": [
+				{
+					"name": "market closed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "69d02ff1-9289-490c-9d44-883aae2baf1e",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"transactionNumber\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\", \"transactionNumber\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"MARKET_CLOSED\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\": \"BUY\",\n\t\"date\": \"2018-11-17T15:23:20.142Z\",\n\t\"stock\": {\n\t\t\"market\": \"NASDAQ\",\n\t\t\"symbol\": \"GOOG\"\n\t},\n\t\"quantity\": 10\n}"
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/transactions",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"transactions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RTHI - Lister l’historique des transactions",
+			"item": [
+				{
+					"name": "lister historique transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"object\",",
+									"    \"properties\": {",
+									"        \"date\": {",
+									"            \"type\": \"string\"",
+									"        },",
+									"        \"transactions\": {",
+									"            \"type\": \"array\",",
+									"            \"items\": {",
+									"                \"type\": \"object\",",
+									"                \"properties\": {",
+									"                    \"transactionNumber\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"type\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"date\": {",
+									"                        \"type\": \"string\"",
+									"                    },",
+									"                    \"fees\": {",
+									"                        \"type\": \"number\"",
+									"                    },",
+									"                    \"stock\": {",
+									"                        \"type\": \"object\",",
+									"                        \"properties\": {",
+									"                            \"market\": {",
+									"                                \"type\": \"string\"",
+									"                            },",
+									"                            \"symbol\": {",
+									"                                \"type\": \"string\"",
+									"                            }",
+									"                        },",
+									"                        \"required\": [ \"market\", \"symbol\" ]",
+									"                    },",
+									"                    \"purchasedPrice\": {",
+									"                        \"type\": \"number\"",
+									"                    },",
+									"                    \"quantity\": {",
+									"                        \"type\": \"number\"",
+									"                    }",
+									"                },",
+									"                \"required\": [ \"transactionNumber\", \"type\", \"date\", \"fees\", \"stock\", \"quantity\" ]",
+									"            }",
+									"        }",
+									"    },",
+									"    \"required\": [ \"date\", \"transactions\" ]",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"Report date is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedDate = \"2018-08-21T23:59:59.999-05:00\";",
+									"    pm.expect(jsonData.date).to.eql(expectedDate);",
+									"});",
+									"",
+									"pm.test(\"Transaction number is right\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var expectedTransactionNumber = pm.variables.get(\"created_buy_transaction_number\");",
+									"    pm.expect(jsonData.transactions[0].transactionNumber).to.eql(expectedTransactionNumber);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/reports?type=DAILY&date=2018-08-21",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILY"
+								},
+								{
+									"key": "date",
+									"value": "2018-08-21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "account not found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"ACCOUNT_NOT_FOUND\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{invalid_account_number}}/reports?type=DAILY&date=2018-08-21",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{invalid_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILY"
+								},
+								{
+									"key": "date",
+									"value": "2018-08-21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "report type unsupported",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"REPORT_TYPE_UNSUPPORTED\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/reports?type=DAILYED&date=2018-08-21",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILYED"
+								},
+								{
+									"key": "date",
+									"value": "2018-08-21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "missing date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"MISSING_DATE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/reports?type=DAILY",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILY"
+								},
+								{
+									"key": "date",
+									"value": "2018-08-21",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "missing report type",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"MISSING_REPORT_TYPE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/reports?date=2018-08-21",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILY",
+									"disabled": true
+								},
+								{
+									"key": "date",
+									"value": "2018-08-21"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "invalid date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4fa253e4-8e4a-4db4-9855-237170294b9f",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"var schema = {",
+									"    \"type\": \"array\",",
+									"    \"items\": {",
+									"        \"type\": \"object\",",
+									"        \"properties\": {",
+									"            \"error\": {",
+									"                \"type\": \"string\"",
+									"            },",
+									"            \"description\": {",
+									"                \"type\": \"string\"",
+									"            }",
+									"        },",
+									"        \"required\": [ \"error\", \"description\" ]",
+									"    }",
+									"};",
+									"pm.test('Schema is valid', function() {",
+									"    var jsonData = pm.response.json();",
+									"  pm.expect(tv4.validate(jsonData, schema)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"error is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0].error).to.eql(\"INVALID_DATE\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8181/accounts/{{created_account_number}}/reports?type=DAILY&date=2222-08-21",
+							"host": [
+								"localhost"
+							],
+							"port": "8181",
+							"path": [
+								"accounts",
+								"{{created_account_number}}",
+								"reports"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "DAILY"
+								},
+								{
+									"key": "date",
+									"value": "2222-08-21"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
